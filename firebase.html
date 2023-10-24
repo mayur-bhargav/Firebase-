@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Firebase Authentication</title>
+  <!-- Add Firebase SDK -->
+
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+      margin: 0;
+    }
+
+    #login-container {
+      text-align: center;
+    }
+
+    button {
+      padding: 10px;
+      margin: 10px;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-auth.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-firestore.js"></script>
+  
+  <!-- Initialize Firebase -->
+  <script>
+    const firebaseConfig = {
+        apiKey: "AIzaSyDoENRZU9UePsn8rcxHs4iXjiqCao6poV4",
+  authDomain: "magva-2311b.firebaseapp.com",
+  databaseURL: "https://magva-2311b-default-rtdb.firebaseio.com",
+  projectId: "magva-2311b",
+  storageBucket: "magva-2311b.appspot.com",
+  messagingSenderId: "912781196053",
+  appId: "1:912781196053:web:a2496b5a074058a9b2c71c",
+
+  measurementId: "G-0DRZEX8QNY"
+    };
+
+    firebase.initializeApp(firebaseConfig);
+    const auth = firebase.auth();
+    const firestore = firebase.firestore();
+    const analytics = firebase.analytics();
+  </script>
+<div id="login-container">
+  <h1>Firebase Authentication</h1>
+  <button onclick="signInWithGoogle()">Sign In with Google</button>
+  <button onclick="signInWithFacebook()">Sign in with Facebook</button>
+  <button onclick="signInWithGitHub()">Sign in with GitHub</button>
+  <br>
+  <input type="text" id="otp" placeholder="Enter OTP">
+  <button onclick="signInWithOTP()">Sign in with OTP</button>
+</div>
+
+<script>
+  // Sign in with Google
+  function signInWithGoogle() {
+        const provider = new firebase.auth.GoogleAuthProvider();
+        firebase.auth().signInWithPopup(provider)
+            .then((result) => {
+                const user = result.user;
+                console.log(user);
+            })
+            .catch((error) => {
+                console.error(error);
+            });
+    }
+
+  // Sign in with Facebook
+  function signInWithFacebook() {
+    const provider = new firebase.auth.FacebookAuthProvider();
+    firebase.auth().signInWithPopup(provider)
+            .then((result) => {
+                const user = result.user;
+                console.log(user);
+            })
+            .catch((error) => {
+                console.error(error);
+            });
+  }
+
+  // Sign in with GitHub
+  function signInWithGitHub() {
+    const provider = new firebase.auth.GithubAuthProvider();
+    firebase.auth().signInWithPopup(provider)
+            .then((result) => {
+                const user = result.user;
+                console.log(user);
+            })
+            .catch((error) => {
+                console.error(error);
+            });
+  }
+
+  // Sign in with OTP
+  function signInWithOTP() {
+    const otp = document.getElementById('otp').value;
+    const confirmationResult = window.confirmationResult;
+    const credential = firebase.auth.PhoneAuthProvider.credential(confirmationResult.verificationId, otp);
+    signInWithCredential(credential);
+  }
+
+  // Shared function to sign in with various providers
+  function signInWithProvider(provider) {
+    auth.signInWithPopup(provider)
+      .then((result) => {
+        console.log(result.user);
+        alert('Signed in successfully!');
+      })
+      .catch((error) => {
+        console.error(error.message);
+        alert('Error signing in!');
+      });
+  }
+
+  // Initialize phone authentication
+  function startPhoneNumberVerification() {
+    const phoneNumber = '+1234567890'; // Replace with the user's phone number
+    const appVerifier = new firebase.auth.RecaptchaVerifier('login-container');
+    
+    firebase.auth().signInWithPhoneNumber(phoneNumber, appVerifier)
+      .then((confirmationResult) => {
+        window.confirmationResult = confirmationResult;
+        alert('OTP sent!');
+      })
+      .catch((error) => {
+        console.error(error.message);
+        alert('Error sending OTP!');
+      });
+  }
+
+  // Generic function to sign in with credential
+  function signInWithCredential(credential) {
+    auth.signInWithCredential(credential)
+      .then((result) => {
+        console.log(result.user);
+        alert('Signed in successfully!');
+      })
+      .catch((error) => {
+        console.error(error.message);
+        alert('Error signing in!');
+      });
+  }
+</script>
+
+</body>
+</html>
